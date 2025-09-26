@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
+import { Hourglass, Banknote } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -9,7 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-export default function Home() {
+export default function LifeCountdownDemo() {
   const [age, setAge] = useState(30);
   const [lifeExpectancy, setLifeExpectancy] = useState(85);
   const [assets, setAssets] = useState(5000000);
@@ -32,88 +34,115 @@ export default function Home() {
   const dailyBudget = Math.floor(currentAssets / remainingDays);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center p-6">
-      <h1 className="text-3xl font-bold mb-4">
-        Life Countdown ＋ 資産シミュレーション
+    <div className="min-h-screen bg-gradient-to-br from-purple-500 via-pink-400 to-indigo-500 flex flex-col items-center p-8 text-white">
+      <h1 className="text-4xl font-extrabold mb-8 drop-shadow-lg">
+        Life Countdown × 資産シミュレーション
       </h1>
 
       {/* 入力フォーム */}
-      <div className="grid grid-cols-2 gap-4 mb-6 bg-white p-4 rounded-2xl shadow-md">
+      <div className="bg-white text-gray-800 rounded-2xl shadow-xl p-6 mb-8 grid grid-cols-2 gap-4 w-full max-w-3xl">
         <label>
-          年齢:{" "}
+          年齢:
           <input
             type="number"
             value={age}
             onChange={(e) => setAge(Number(e.target.value))}
-            className="border p-1 ml-2"
+            className="border p-1 ml-2 rounded"
           />
         </label>
         <label>
-          想定寿命:{" "}
+          想定寿命:
           <input
             type="number"
             value={lifeExpectancy}
             onChange={(e) => setLifeExpectancy(Number(e.target.value))}
-            className="border p-1 ml-2"
+            className="border p-1 ml-2 rounded"
           />
         </label>
         <label>
-          現在資産(円):{" "}
+          現在資産(円):
           <input
             type="number"
             value={assets}
             onChange={(e) => setAssets(Number(e.target.value))}
-            className="border p-1 ml-2"
+            className="border p-1 ml-2 rounded"
           />
         </label>
         <label>
-          月収(円):{" "}
+          月収(円):
           <input
             type="number"
             value={income}
             onChange={(e) => setIncome(Number(e.target.value))}
-            className="border p-1 ml-2"
+            className="border p-1 ml-2 rounded"
           />
         </label>
         <label>
-          月支出(円):{" "}
+          月支出(円):
           <input
             type="number"
             value={expenses}
             onChange={(e) => setExpenses(Number(e.target.value))}
-            className="border p-1 ml-2"
+            className="border p-1 ml-2 rounded"
           />
         </label>
         <label>
-          年利(%):{" "}
+          年利(%):
           <input
             type="number"
             value={rate}
             onChange={(e) => setRate(Number(e.target.value))}
-            className="border p-1 ml-2"
+            className="border p-1 ml-2 rounded"
           />
         </label>
       </div>
 
-      {/* カウントダウン */}
-      <div className="mb-6 text-center">
-        <p className="text-2xl font-semibold">
-          残り日数: {remainingDays.toLocaleString()} 日
+      {/* カウントダウンカード */}
+      <motion.div
+        className="bg-gradient-to-r from-purple-600 via-pink-500 to-yellow-400 rounded-2xl shadow-lg p-6 text-center w-full max-w-md mb-6"
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+      >
+        <Hourglass className="mx-auto w-12 h-12 mb-2" />
+        <p className="text-6xl font-extrabold drop-shadow-lg">
+          {remainingDays.toLocaleString()}
         </p>
-        <p className="text-lg text-gray-600">
-          1日あたり自由に使えるお金: {dailyBudget.toLocaleString()} 円
+        <p className="text-lg">日 残り</p>
+      </motion.div>
+
+      {/* 1日あたり円カード */}
+      <motion.div
+        className="bg-white rounded-2xl shadow-lg p-6 mt-4 text-center w-full max-w-md"
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+      >
+        <Banknote className="mx-auto w-12 h-12 text-green-500 mb-2" />
+        <p className="text-4xl font-extrabold text-green-600 drop-shadow-sm">
+          ¥{dailyBudget.toLocaleString()} / DAY
         </p>
-      </div>
+      </motion.div>
 
       {/* 資産推移グラフ */}
-      <div className="w-full h-80 bg-white p-4 rounded-2xl shadow-md">
+      <div className="w-full h-80 bg-white text-gray-800 p-4 rounded-2xl shadow-xl mt-8 max-w-4xl">
         <ResponsiveContainer>
           <LineChart data={data}>
-            <Line type="monotone" dataKey="assets" stroke="#2563eb" strokeWidth={3} />
-            <CartesianGrid stroke="#ccc" />
+            <Line
+              type="monotone"
+              dataKey="assets"
+              stroke="url(#colorAssets)"
+              strokeWidth={4}
+              dot={false}
+            />
+            <CartesianGrid stroke="#ddd" />
             <XAxis dataKey="year" />
             <YAxis />
             <Tooltip />
+            <defs>
+              <linearGradient id="colorAssets" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.9} />
+                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.2} />
+              </linearGradient>
+            </defs>
           </LineChart>
         </ResponsiveContainer>
       </div>
